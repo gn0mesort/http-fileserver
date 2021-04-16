@@ -10,20 +10,52 @@ body {
     grid-template: "left header right"
                    "left main right"
                    "left footer right";
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 10rem 1fr 10rem;
+    grid-template-rows: auto 1fr auto;
     font-family: "Fira Code", monospace;
     font-size: 10pt;
 }
 
 header {
     grid-area: header;
+    text-align: center;
+}
+
+a.reflink:link, a.reflink:visited {
+    color: #aaa;
+    text-decoration: none;
+}
+
+a.reflink:hover {
+    color: #888;
+    text-decoration: none;
 }
 
 main {
     grid-area: main;
+    text-align: center;
 }
 
 footer {
     grid-area: footer;
+    text-align: center;
+}
+
+table, tr, td, th {
+    border: double;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 1rem;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+}
+
+img.icon {
+    vertical-align: middle;
+    horiz-align: center;
 }
