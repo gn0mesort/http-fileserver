@@ -86,7 +86,7 @@ public class RequestThread extends Thread {
         Template template = this.errors.get(status);
         if (template == null)
         {
-            template = Template.from(root(this.root, Path.of("templates/default.template.html")));
+            template = Template.from(root(this.root, Path.of(".data/templates/default.template.html")));
             this.errors.put(status, template);
             template.set("title", message);
             template.set("header", String.format("<h1>Error %d</h1>", status));
@@ -125,9 +125,9 @@ public class RequestThread extends Thread {
             Template template = this.directories.get(desired);
             if (template == null)
             {
-                template = Template.from(root(this.root, Path.of("templates/default.template.html")));
+                template = Template.from(root(this.root, Path.of(".data/templates/default.template.html")));
                 this.directories.put(desired, template);
-                template.set("title", () -> String.format("/%s", this.root.relativize(desired)));
+                template.set("title", () -> String.format("Index of /%s", this.root.relativize(desired)));
                 template.set("header", () -> String.format("<h1>Index of /%s</h1>", this.root.relativize(desired)));
                 template.set("body", new DirectorySupplier(this.root, desired));
                 template.set("footer", String.format("%s", getFooter()));
@@ -188,6 +188,7 @@ public class RequestThread extends Thread {
             catch (final Exception err)
             {
                 respondInternalServerError(SupportedHttpMethod.Get, output);
+                err.printStackTrace();
             }
         }
         catch (final IOException err)

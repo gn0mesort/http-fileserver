@@ -29,16 +29,19 @@ public class DirectorySupplier implements Supplier<String> {
             for (final Path entry : dir)
             {
                 final File file = entry.toFile();
-                final String mimetype = Files.probeContentType(entry);
+                if (!file.isHidden())
+                {
 
-                final String icon = file.isDirectory() ? "icons/places/folder.svg" : String.format("icons/mimetypes/%s.svg", mimetype.replaceAll("\\/", "-"));
-                final String href = String.format("/%s", this.root.relativize(entry));
-                final String name = file.getName();
-                final String length = file.isDirectory() ? String.format("%d Items", file.listFiles().length) : String.format("%d Bytes", file.length());
-                final String time = Instant.ofEpochMilli(file.lastModified()).atZone(Clock.systemDefaultZone().getZone()).toOffsetDateTime().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-                final String row = String.format("<tr id=\"row-%d\"><td><a class=\"reflink\" href=\"#row-%d\">#</a>&nbsp;&nbsp;<img class=\"icon\" src=\"/img/%s\" />&nbsp;&nbsp;<a href=\"%s\">%s</a></td><td>%s</td><td><time datetime=\"%s\">%s</time></td></tr>", count, count, icon, href, name, length, time, time);
-                builder.append(row);
-                ++count;
+                    final String mimetype = Files.probeContentType(entry);
+                    final String icon = file.isDirectory() ? "icons/places/folder.svg" : String.format("icons/mimetypes/%s.svg", mimetype.replaceAll("\\/", "-"));
+                    final String href = String.format("/%s", this.root.relativize(entry));
+                    final String name = file.getName();
+                    final String length = file.isDirectory() ? String.format("%d Items", file.listFiles().length) : String.format("%d Bytes", file.length());
+                    final String time = Instant.ofEpochMilli(file.lastModified()).atZone(Clock.systemDefaultZone().getZone()).toOffsetDateTime().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
+                    final String row = String.format("<tr id=\"row-%d\"><td><a class=\"reflink\" href=\"#row-%d\">#</a>&nbsp;&nbsp;<img class=\"icon\" src=\"/.data/img/%s\" />&nbsp;&nbsp;<a href=\"%s\">%s</a></td><td>%s</td><td><time datetime=\"%s\">%s</time></td></tr>", count, count, icon, href, name, length, time, time);
+                    builder.append(row);
+                    ++count;
+                }
             }
         }
         catch (final IOException err)
