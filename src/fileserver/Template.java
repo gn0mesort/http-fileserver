@@ -35,7 +35,7 @@ public class Template {
         this.mappings.put(variable, obj);
     }
 
-    public <Type> void  set(final String variable, final Supplier<Type> fn) {
+    public <Type> void set(final String variable, final Supplier<Type> fn) {
         this.mappings.put(variable, fn);
         this.dirty = true;
     }
