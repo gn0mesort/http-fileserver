@@ -8,6 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * An executable class for the Server.
+ *
+ * @author Alexander Rothman #714145 <alexanderpaul.rothman@calbaptist.edu>
+ * @since April 16, 2021
+ */
 public class Server {
     private static final ConcurrentHashMap<Integer, Template> errors = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Path, Template> directories = new ConcurrentHashMap<>();

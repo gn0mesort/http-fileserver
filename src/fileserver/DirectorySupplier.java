@@ -1,7 +1,10 @@
 package fileserver;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,12 +14,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * A function object that is used to supply HTML output for directory objects.
+ *
+ * @author Alexander Rothman #714145 <alexanderpaul.rothman@calbaptist.edu>
+ * @since April 16, 2021
+ */
 public class DirectorySupplier implements Supplier<String> {
     private final Path root;
     private final Path metaDirectory;
     private final Path directory;
     private final boolean showHidden;
 
+    /**
+     * Constructs a new DirectorySupplier.
+     *
+     * @param root The absolute Path to the root of the Server's filesystem.
+     * @param metaDirectory The absolute Path to the Server's meta file directory.
+     * @param showHidden Whether or not to display hidden files/directories.
+     * @param directory The Path to the directory to generate HTML for.
+     */
     public DirectorySupplier(final Path root, final Path metaDirectory, final boolean showHidden,
                              final Path directory) {
         this.root = root;
@@ -25,6 +42,11 @@ public class DirectorySupplier implements Supplier<String> {
         this.directory = directory;
     }
 
+    /**
+     * Generate HTML representing the configured directory.
+     *
+     * @return A valid HTML body for a directory index page.
+     */
     @Override
     public String get() {
         StringBuilder builder = new StringBuilder();
@@ -40,7 +62,6 @@ public class DirectorySupplier implements Supplier<String> {
                 if (!file.isHidden() || this.showHidden)
                 {
 
-                    final String mimetype = Files.probeContentType(entry);
                     final String icon;
                     final String length;
                     if (file.isDirectory())
@@ -50,6 +71,22 @@ public class DirectorySupplier implements Supplier<String> {
                     }
                     else
                     {
+                        // This is ridiculous but it will either determine the type of the file or decide it's an octet
+                        // stream. Really when you think about it everything is just an octet stream anyway.
+                        String mimetype = Files.probeContentType(entry);
+                        if (mimetype == null)
+                        {
+                            final BufferedInputStream fstream = new BufferedInputStream(new FileInputStream(file));
+                            mimetype = URLConnection.guessContentTypeFromStream(fstream);
+                        }
+                        if (mimetype == null)
+                        {
+                            mimetype = URLConnection.guessContentTypeFromName(file.getName());
+                        }
+                        if (mimetype == null)
+                        {
+                            mimetype = "application/octet-stream";
+                        }
                         icon = String.format("icons/mimetypes/%s.svg", mimetype.replaceAll("/", "-"));
                         length = String.format("%d Bytes", file.length());
                     }

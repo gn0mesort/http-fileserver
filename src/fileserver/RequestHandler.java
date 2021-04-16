@@ -11,7 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+/**
+ * A Runnable handler for HTTP requests.
+ *
+ * This is intended to be executed by a threadpool.
+ *
+ * @author Alexander Rothman #714145 <alexanderpaul.rothman@calbaptist.edu>
+ * @since April 16, 2021
+ */
 public class RequestHandler implements Runnable {
+    /**
+     * The maximum size, in bytes, of received HTTP requests.
+     */
     public final int MAX_REQUEST_SIZE = 8192; // 8KiB
 
     private enum SupportedHttpMethod {
@@ -44,6 +55,14 @@ public class RequestHandler implements Runnable {
         return Path.of(root.toString(), child.toString()).toAbsolutePath();
     }
 
+    /**
+     * Constructs a new RequestHandler with the given page caches, Configuration, and client Socket.
+     *
+     * @param errors A error page cache. This should be thread-safe or unique to this handler.
+     * @param directories A directory page cache. This should be thread-safe or unique to this handler.
+     * @param config The Server Configuration.
+     * @param client The client Socket to respond to.
+     */
     public RequestHandler(final Map<Integer, Template> errors, final Map<Path, Template> directories,
                           final Configuration config, final Socket client) {
         this.errors = errors;
@@ -173,6 +192,9 @@ public class RequestHandler implements Runnable {
         respondError(method, 500, "Internal Server Error", output);
     }
 
+    /**
+     * Handles incoming HTTP GET or HEAD requests and responds accordingly.
+     */
     @Override
     public void run() {
         try

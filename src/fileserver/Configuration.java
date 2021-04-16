@@ -6,7 +6,23 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * Represents a server configuration file.
+ *
+ * Configuration files are basically tradition all *.conf files. Empty lines or lines beginning with # are ignored.
+ * Otherwise the the lines are interpreted as key-value pairs. Sections are not supported.
+ *
+ * @author Alexander Rothman #714145 <alexanderpaul.rothman@calbaptist.edu>
+ * @since April 16, 2021
+ */
 public class Configuration {
+    /**
+     * Parse a configuration file.
+     *
+     * @param config A valid Path to a configuration file.
+     * @return A new Configuration object representing the parsed data.
+     * @throws IOException If the input file cannot be read.
+     */
     public static Configuration from(final Path config) throws IOException {
         final List<String> lines = Files.readAllLines(config);
         Path root = null;
@@ -46,10 +62,21 @@ public class Configuration {
     private final short port;
     private final boolean showHidden;
 
+    /**
+     * Constructs a default Configuration.
+     */
     public Configuration() {
         this(null, null, (short) 0, false);
     }
 
+    /**
+     * Constructs a Configuration from the input parameters.
+     *
+     * @param root The root path for the server. Defaults to /
+     * @param metaRoot The root path for server meta files. This is relative to root. Defaults to .meta
+     * @param port The port to bind the server to. Defaults to 80.
+     * @param showHidden Whether or not the server should display hidden files. Defaults to false.
+     */
     public Configuration(final Path root, final Path metaRoot, final short port, final boolean showHidden) {
         this.root = root != null ? root.toAbsolutePath() : Path.of("/");
         this.metaRoot =
@@ -58,22 +85,41 @@ public class Configuration {
         this.showHidden = showHidden;
     }
 
+    /**
+     * @return The root path for the Configuration.
+     */
     public Path getRoot() {
         return this.root;
     }
 
+    /**
+     * @return The meta root path for the Configuration.
+     */
     public Path getMetaRoot() {
         return this.metaRoot;
     }
 
+    /**
+     * @return The port for the Configuration.
+     */
     public short getPort() {
         return this.port;
     }
 
+    /**
+     * @return True if the server should display hidden files. Otherwise false.
+     */
     public boolean shouldShowHidden() {
         return this.showHidden;
     }
 
+    /**
+     * Convert a Configuration to a String representation.
+     *
+     * This will result in a valid minimal configuration file if written to a file.
+     *
+     * @return A String representing the Configuration.
+     */
     @Override
     public String toString() {
         return "root=" +
