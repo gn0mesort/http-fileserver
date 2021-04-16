@@ -1,0 +1,18 @@
+[Unit]
+Description=Java-based simple HTTP file server.
+After=network.target
+
+[Service]
+ProtectHome=true
+PrivateUsers=true
+ProtectSystem=true
+
+User=http-fileserver
+Group=http-fileserver
+
+ExecStart=/usr/bin/java -jar /usr/local/bin/http-fileserver.jar /etc/megatech/http-fileserver/default.conf
+Restart=on-failure
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target
