@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 /**
  * Represents a server configuration file.
  *
- * Configuration files are basically tradition all *.conf files. Empty lines or lines beginning with # are ignored.
+ * Configuration files are basically traditional *.conf files. Empty lines or lines beginning with # are ignored.
  * Otherwise the the lines are interpreted as key-value pairs. Sections are not supported.
  *
  * @author Alexander Rothman #714145 <alexanderpaul.rothman@calbaptist.edu>
