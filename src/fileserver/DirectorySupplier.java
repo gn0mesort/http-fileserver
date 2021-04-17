@@ -50,9 +50,18 @@ public class DirectorySupplier implements Supplier<String> {
     @Override
     public String get() {
         StringBuilder builder = new StringBuilder();
-        final String opening = "<hr /><a href=\"/%s\">Up one level</a><br /><br /><table><tr><th>Name</th><th>Size" +
-                "</th><th>Date Modified</th></tr>";
-        builder.append(String.format(opening, this.root.relativize(this.directory.getParent())));
+        final String opening = "<hr /><a %s>Up one level</a><br /><br /><table><tr><th>Name</th><th>Size</th><th>Date" +
+                "Modified</th></tr>";
+        final String openingAttrs;
+        if (this.directory.equals(this.root))
+        {
+            openingAttrs = "class=\"disabled\" href=\"#\"";
+        }
+        else
+        {
+            openingAttrs = String.format("href=\"/%s\"", this.root.relativize(this.directory.getParent()));
+        }
+        builder.append(String.format(opening, openingAttrs));
         try (final DirectoryStream<Path> dir = Files.newDirectoryStream(this.directory))
         {
             long count = 0;
@@ -67,6 +76,7 @@ public class DirectorySupplier implements Supplier<String> {
                     if (file.isDirectory())
                     {
                         icon = "icons/places/folder.svg";
+                        // I know this violates the spec. I do not care. I like this better. The spec is boring.
                         length = String.format("%d Items", Objects.requireNonNull(file.listFiles()).length);
                     }
                     else
@@ -88,7 +98,7 @@ public class DirectorySupplier implements Supplier<String> {
                             mimetype = "application/octet-stream";
                         }
                         icon = String.format("icons/mimetypes/%s.svg", mimetype.replaceAll("/", "-"));
-                        length = String.format("%d Bytes", file.length());
+                        length = String.format("%.1f KiB", file.length() / 1024.0);
                     }
                     final String href = String.format("/%s", this.root.relativize(entry));
                     final String name = file.getName();

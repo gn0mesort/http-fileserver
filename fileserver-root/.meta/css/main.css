@@ -21,6 +21,11 @@ header {
     text-align: center;
 }
 
+.disabled {
+    color: #aaa;
+    pointer-events: none;
+}
+
 a.reflink:link, a.reflink:visited {
     color: #aaa;
     text-decoration: none;
