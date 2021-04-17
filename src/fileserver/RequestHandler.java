@@ -36,6 +36,7 @@ public class RequestHandler implements Runnable {
     private final Socket client;
     private final Path root;
     private final Path metaDirectory;
+    private final Path theme;
     private final Path defaultTemplate;
     private final boolean showHidden;
 
@@ -68,7 +69,8 @@ public class RequestHandler implements Runnable {
         this.errors = errors;
         this.directories = directories;
         this.root = config.getRoot();
-        this.metaDirectory = Path.of(config.getRoot().toString(), config.getMetaRoot().toString()).toAbsolutePath();
+        this.metaDirectory = Path.of(this.root.toString(), config.getMetaRoot().toString()).toAbsolutePath();
+        this.theme = Path.of(this.metaDirectory.toString(), config.getTheme().toString()).toAbsolutePath();
         this.defaultTemplate = Path.of(this.metaDirectory.toString(), "templates/default.template.html");
         this.showHidden = config.shouldShowHidden();
         this.client = client;
@@ -120,6 +122,7 @@ public class RequestHandler implements Runnable {
             template = Template.from(this.defaultTemplate);
             this.errors.put(status, template);
             template.set("meta", this.root.relativize(this.metaDirectory));
+            template.set("theme_path", this.metaDirectory.relativize(this.theme));
             template.set("title", message);
             template.set("header", String.format("<h1>Error %d</h1>", status));
             template.set("body", String.format("<p>%s</p>", message));
@@ -161,6 +164,7 @@ public class RequestHandler implements Runnable {
                 template = Template.from(this.defaultTemplate);
                 this.directories.put(desired, template);
                 template.set("meta", this.root.relativize(this.metaDirectory));
+                template.set("theme_path", this.metaDirectory.relativize(this.theme));
                 template.set("title", () -> String.format("Index of /%s", this.root.relativize(desired)));
                 template.set("header", () -> String.format("<h1>Index of /%s</h1>", this.root.relativize(desired)));
                 template.set("body", new DirectorySupplier(this.root, this.metaDirectory, this.showHidden, desired));

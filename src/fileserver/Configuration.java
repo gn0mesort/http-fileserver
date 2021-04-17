@@ -27,6 +27,7 @@ public class Configuration {
         final List<String> lines = Files.readAllLines(config);
         Path root = null;
         Path metaRoot = null;
+        Path theme = null;
         short port = 0;
         boolean showHidden = false;
         for (final String line : lines)
@@ -48,17 +49,22 @@ public class Configuration {
                 {
                     port = Short.parseShort(value);
                 }
+                else if (key.equalsIgnoreCase("theme"))
+                {
+                    theme = Path.of(value);
+                }
                 else if (key.equalsIgnoreCase("show-hidden"))
                 {
                     showHidden = Boolean.parseBoolean(value);
                 }
             }
         }
-        return new Configuration(root, metaRoot, port, showHidden);
+        return new Configuration(root, metaRoot, theme, port, showHidden);
     }
 
     private final Path root;
     private final Path metaRoot;
+    private final Path theme;
     private final short port;
     private final boolean showHidden;
 
@@ -66,7 +72,7 @@ public class Configuration {
      * Constructs a default Configuration.
      */
     public Configuration() {
-        this(null, null, (short) 0, false);
+        this(null, null, null, (short) 0, false);
     }
 
     /**
@@ -74,13 +80,18 @@ public class Configuration {
      *
      * @param root The root path for the server. Defaults to /
      * @param metaRoot The root path for server meta files. This is relative to root. Defaults to .meta
+     * @param theme The path to the theme CSS file. This is relative to metaRoot. Defaults to css/theme.css
      * @param port The port to bind the server to. Defaults to 80.
      * @param showHidden Whether or not the server should display hidden files. Defaults to false.
      */
-    public Configuration(final Path root, final Path metaRoot, final short port, final boolean showHidden) {
+    public Configuration(final Path root, final Path metaRoot, final Path theme, final short port,
+                         final boolean showHidden) {
         this.root = root != null ? root.toAbsolutePath() : Path.of("/");
         this.metaRoot =
                 this.root.relativize(Path.of(this.root.toString(), metaRoot != null ? metaRoot.toString() : ".meta"));
+        this.theme =
+                this.metaRoot.relativize(Path.of(this.metaRoot.toString(), theme != null ? theme.toString() : "css/" +
+                        "theme.css"));
         this.port = port != 0 ? port : 80;
         this.showHidden = showHidden;
     }
@@ -97,6 +108,13 @@ public class Configuration {
      */
     public Path getMetaRoot() {
         return this.metaRoot;
+    }
+
+    /**
+     * @return The path to the theme CSS file for the Configuration.
+     */
+    public Path getTheme() {
+        return this.theme;
     }
 
     /**
@@ -127,6 +145,9 @@ public class Configuration {
                 System.lineSeparator() +
                 "meta-root=" +
                 this.metaRoot +
+                System.lineSeparator() +
+                "theme=" +
+                this.theme +
                 System.lineSeparator() +
                 "port=" +
                 this.port +
