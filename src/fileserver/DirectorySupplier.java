@@ -42,6 +42,17 @@ public class DirectorySupplier implements Supplier<String> {
         this.directory = directory;
     }
 
+    private String toHumanReadable(final long bytes) {
+        if (bytes < 1024)
+        {
+            return String.format("%d Bytes", bytes);
+        }
+        final int zeroes = (63 - Long.numberOfLeadingZeros(bytes)) / 10;
+        System.out.printf("%d %d%n", bytes, zeroes);
+        final String units = "KMGTPE";
+        return String.format("%.1f %ciB", (double) bytes / (1L << (zeroes * 10)), units.charAt(zeroes - 1));
+    }
+
     /**
      * Generate HTML representing the configured directory.
      *
@@ -98,7 +109,9 @@ public class DirectorySupplier implements Supplier<String> {
                             mimetype = "application/octet-stream";
                         }
                         icon = String.format("icons/mimetypes/%s.svg", mimetype.replaceAll("/", "-"));
-                        length = String.format("%.1f KiB", file.length() / 1024.0);
+                        // This is also not to spec. I still do not care. This is better.
+                        // Calculates the correct binary unit to use and displays it.
+                        length = toHumanReadable(file.length());
                     }
                     final String href = String.format("/%s", this.root.relativize(entry));
                     final String name = file.getName();
