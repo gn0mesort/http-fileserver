@@ -1,5 +1,5 @@
 /**
- * Converts server ISO datetimes to client locate datetimes.
+ * Converts server ISO datetimes to client locale datetimes.
  */
 function fixTimes() {
     const times = document.querySelectorAll("time");
