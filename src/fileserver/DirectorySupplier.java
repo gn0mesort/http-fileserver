@@ -50,7 +50,7 @@ public class DirectorySupplier implements Supplier<String> {
     @Override
     public String get() {
         StringBuilder builder = new StringBuilder();
-        final String opening = "<hr /><a %s>Up one level</a><br /><br /><table><tr><th>Name</th><th>Size</th><th>Date" +
+        final String opening = "<hr /><a %s>Up one level</a><br /><br /><table><tr><th>Name</th><th>Size</th><th>Date " +
                 "Modified</th></tr>";
         final String openingAttrs;
         if (this.directory.equals(this.root))
